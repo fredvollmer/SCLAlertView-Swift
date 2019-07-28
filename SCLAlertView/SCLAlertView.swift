@@ -9,23 +9,23 @@
 import Foundation
 import UIKit
 fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l < r
+    case (nil, _?):
+        return true
+    default:
+        return false
+    }
 }
 
 fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l > r
-  default:
-    return rhs < lhs
-  }
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l > r
+    default:
+        return rhs < lhs
+    }
 }
 
 
@@ -52,7 +52,7 @@ public enum SCLAlertViewStyle {
         }
         
     }
-
+    
 }
 
 // Animation Styles
@@ -137,6 +137,7 @@ open class SCLAlertView: UIViewController {
         let kTextFieldHeight: CGFloat
         let kTextViewdHeight: CGFloat
         let kButtonHeight: CGFloat
+        let kButtonPadding: CGFloat
         let contentViewColor: UIColor
         let contentViewBorderColor: UIColor
         let titleColor: UIColor
@@ -157,7 +158,8 @@ open class SCLAlertView: UIViewController {
         // Actions
         var hideWhenBackgroundViewIsTapped: Bool
         
-        public init(kDefaultShadowOpacity: CGFloat = 0.7, kCircleTopPosition: CGFloat = -12.0, kCircleBackgroundTopPosition: CGFloat = -15.0, kCircleHeight: CGFloat = 56.0, kCircleIconHeight: CGFloat = 20.0, kTitleTop:CGFloat = 30.0, kTitleHeight:CGFloat = 25.0, kWindowWidth: CGFloat = 240.0, kWindowHeight: CGFloat = 178.0, kTextHeight: CGFloat = 90.0, kTextFieldHeight: CGFloat = 45.0, kTextViewdHeight: CGFloat = 80.0, kButtonHeight: CGFloat = 45.0, kTitleFont: UIFont = UIFont.systemFont(ofSize: 20), kTextFont: UIFont = UIFont.systemFont(ofSize: 14), kButtonFont: UIFont = UIFont.boldSystemFont(ofSize: 14), showCloseButton: Bool = true, showCircularIcon: Bool = true, shouldAutoDismiss: Bool = true, contentViewCornerRadius: CGFloat = 5.0, fieldCornerRadius: CGFloat = 3.0, buttonCornerRadius: CGFloat = 3.0, hideWhenBackgroundViewIsTapped: Bool = false, contentViewColor: UIColor = UIColorFromRGB(0xFFFFFF), contentViewBorderColor: UIColor = UIColorFromRGB(0xCCCCCC), titleColor: UIColor = UIColorFromRGB(0x4D4D4D)) {
+        public init(kDefaultShadowOpacity: CGFloat = 0.7, kCircleTopPosition: CGFloat = -12.0, kCircleBackgroundTopPosition: CGFloat = -15.0, kCircleHeight: CGFloat = 56.0, kCircleIconHeight: CGFloat = 20.0, kTitleTop:CGFloat = 30.0, kTitleHeight:CGFloat = 25.0, kWindowWidth: CGFloat = 240.0, kWindowHeight: CGFloat = 178.0, kTextHeight: CGFloat = 90.0, kTextFieldHeight: CGFloat = 45.0, kTextViewdHeight: CGFloat = 80.0, kButtonHeight: CGFloat = 45.0,
+                    kButtonPadding: CGFloat = 15, kTitleFont: UIFont = UIFont.systemFont(ofSize: 20), kTextFont: UIFont = UIFont.systemFont(ofSize: 14), kButtonFont: UIFont = UIFont.boldSystemFont(ofSize: 14), showCloseButton: Bool = true, showCircularIcon: Bool = true, shouldAutoDismiss: Bool = true, contentViewCornerRadius: CGFloat = 5.0, fieldCornerRadius: CGFloat = 3.0, buttonCornerRadius: CGFloat = 3.0, hideWhenBackgroundViewIsTapped: Bool = false, contentViewColor: UIColor = UIColorFromRGB(0xFFFFFF), contentViewBorderColor: UIColor = UIColorFromRGB(0xCCCCCC), titleColor: UIColor = UIColorFromRGB(0x4D4D4D)) {
             
             self.kDefaultShadowOpacity = kDefaultShadowOpacity
             self.kCircleTopPosition = kCircleTopPosition
@@ -172,6 +174,7 @@ open class SCLAlertView: UIViewController {
             self.kTextFieldHeight = kTextFieldHeight
             self.kTextViewdHeight = kTextViewdHeight
             self.kButtonHeight = kButtonHeight
+            self.kButtonPadding = kButtonPadding
             self.contentViewColor = contentViewColor
             self.contentViewBorderColor = contentViewBorderColor
             self.titleColor = titleColor
@@ -208,7 +211,7 @@ open class SCLAlertView: UIViewController {
     open var iconTintColor: UIColor?
     open var customSubview : UIView?
     
-
+    
     
     // Members declaration
     var baseView = UIView()
@@ -307,7 +310,7 @@ open class SCLAlertView: UIViewController {
         var consumedHeight = CGFloat(0)
         consumedHeight += appearance.kTitleTop + appearance.kTitleHeight
         consumedHeight += 14
-        consumedHeight += appearance.kButtonHeight * CGFloat(buttons.count)
+        consumedHeight += (appearance.kButtonHeight + appearance.kButtonPadding) * CGFloat(buttons.count)
         consumedHeight += appearance.kTextFieldHeight * CGFloat(inputs.count)
         consumedHeight += appearance.kTextViewdHeight * CGFloat(input.count)
         let maxViewTextHeight = maxHeight - consumedHeight
@@ -364,9 +367,9 @@ open class SCLAlertView: UIViewController {
         }
         // Buttons
         for btn in buttons {
-            btn.frame = CGRect(x:12, y:y, width:appearance.kWindowWidth - 24, height:35)
+            btn.frame = CGRect(x:12, y:y, width:appearance.kWindowWidth - 24, height: appearance.kButtonHeight)
             btn.layer.cornerRadius = appearance.buttonCornerRadius
-            y += appearance.kButtonHeight
+            y += appearance.kButtonHeight + appearance.kButtonPadding
         }
     }
     
@@ -412,7 +415,7 @@ open class SCLAlertView: UIViewController {
         appearance.setkWindowHeight(appearance.kWindowHeight + appearance.kTextViewdHeight)
         // Add text view
         let txt = UITextView()
-        // No placeholder with UITextView but you can use KMPlaceholderTextView library 
+        // No placeholder with UITextView but you can use KMPlaceholderTextView library
         txt.font = appearance.kTextFont
         //txt.autocapitalizationType = UITextAutocapitalizationType.Words
         //txt.clearButtonMode = UITextFieldViewMode.WhileEditing
@@ -504,11 +507,11 @@ open class SCLAlertView: UIViewController {
         guard let endKeyBoardFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.minY else {return}
         
         if tmpContentViewFrameOrigin == nil {
-        tmpContentViewFrameOrigin = self.contentView.frame.origin
+            tmpContentViewFrameOrigin = self.contentView.frame.origin
         }
         
         if tmpCircleViewFrameOrigin == nil {
-        tmpCircleViewFrameOrigin = self.circleBG.frame.origin
+            tmpCircleViewFrameOrigin = self.circleBG.frame.origin
         }
         
         var newContentViewFrameY = self.contentView.frame.maxY - endKeyBoardFrame
@@ -745,7 +748,7 @@ open class SCLAlertView: UIViewController {
         
         // Animate in the alert view
         self.showAnimation(animationStyle)
-       
+        
         // Chainable objects
         return SCLAlertViewResponder(alertview: self)
     }
@@ -758,7 +761,7 @@ open class SCLAlertView: UIViewController {
         var animationCenter : CGPoint = rv.center
         
         switch animationStyle {
-
+            
         case .noAnimation:
             self.view.alpha = 1.0
             return;
@@ -779,16 +782,16 @@ open class SCLAlertView: UIViewController {
             animationStartOrigin = CGPoint(x: self.baseView.frame.origin.x - animationStartOffset, y: animationStartOrigin.y)
             animationCenter = CGPoint(x: animationCenter.x - boundingAnimationOffset, y: animationCenter.y)
         }
-
+        
         self.baseView.frame.origin = animationStartOrigin
         UIView.animate(withDuration: animationDuration, animations: {
             self.view.alpha = 1.0
             self.baseView.center = animationCenter
-            }, completion: { finished in
-                UIView.animate(withDuration: animationDuration, animations: {
-                    self.view.alpha = 1.0
-                    self.baseView.center = rv.center
-                })
+        }, completion: { finished in
+            UIView.animate(withDuration: animationDuration, animations: {
+                self.view.alpha = 1.0
+                self.baseView.center = rv.center
+            })
         })
     }
     
@@ -804,27 +807,27 @@ open class SCLAlertView: UIViewController {
     open func hideView() {
         UIView.animate(withDuration: 0.2, animations: {
             self.view.alpha = 0
-            }, completion: { finished in
-                
-                //Stop durationTimer so alertView does not attempt to hide itself and fire it's dimiss block a second time when close button is tapped
-                self.durationTimer?.invalidate()
-                // Stop StatusTimer
-                self.durationStatusTimer?.invalidate()
-                
-                if(self.dismissBlock != nil) {
-                    // Call completion handler when the alert is dismissed
-                    self.dismissBlock!()
-                }
-                
-                // This is necessary for SCLAlertView to be de-initialized, preventing a strong reference cycle with the viewcontroller calling SCLAlertView.
-                for button in self.buttons {
-                    button.action = nil
-                    button.target = nil
-                    button.selector = nil
-                }
-                
-                self.view.removeFromSuperview()
-                self.selfReference = nil
+        }, completion: { finished in
+            
+            //Stop durationTimer so alertView does not attempt to hide itself and fire it's dimiss block a second time when close button is tapped
+            self.durationTimer?.invalidate()
+            // Stop StatusTimer
+            self.durationStatusTimer?.invalidate()
+            
+            if(self.dismissBlock != nil) {
+                // Call completion handler when the alert is dismissed
+                self.dismissBlock!()
+            }
+            
+            // This is necessary for SCLAlertView to be de-initialized, preventing a strong reference cycle with the viewcontroller calling SCLAlertView.
+            for button in self.buttons {
+                button.action = nil
+                button.target = nil
+                button.selector = nil
+            }
+            
+            self.view.removeFromSuperview()
+            self.selfReference = nil
         })
     }
     
@@ -1131,3 +1134,4 @@ class SCLAlertViewStyleKit : NSObject {
         return Cache.imageOfEdit!
     }
 }
+
